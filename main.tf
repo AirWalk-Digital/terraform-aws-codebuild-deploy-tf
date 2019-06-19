@@ -65,8 +65,16 @@ data "aws_iam_policy_document" "codebuild_assume_role" {
 data "aws_iam_policy_document" "codebuild_policy" {
 
   statement {
-    sid = "AllowLogsActions"
-    effect = "Allow"
+    sid       = "AllowAllActions"
+    effect    = "Allow"
+    actions   = ["*"]
+    resources = ["*"]
+  }
+
+  /*
+  statement {
+    sid     = "AllowLogsActions"
+    effect  = "Allow"
     actions = [
       "logs:PutLogEvents",
       "logs:CreateLogGroup",
@@ -76,8 +84,8 @@ data "aws_iam_policy_document" "codebuild_policy" {
   }
 
   statement {
-    sid = "AllowEC2Actions"
-    effect = "Allow"
+    sid     = "AllowEC2Actions"
+    effect  = "Allow"
     actions = [
         "ec2:CreateNetworkInterface",
         "ec2:DescribeDhcpOptions",
@@ -111,6 +119,7 @@ data "aws_iam_policy_document" "codebuild_policy" {
     ]
     resources = ["*"]
   }
+  */
 }
 
 resource "aws_iam_role" "codebuild_role" {
