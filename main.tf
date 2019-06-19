@@ -143,10 +143,10 @@ resource "aws_codebuild_project" "project" {
     //image_pull_credentials_type = "CODEBUILD"
     environment_variable {
       name  = "TF_VERSION" //var loop?
-      value = "0.11.14" //var
+      value = "0.11.14"    //var
     }
     environment_variable {
-      name  = "TF_ENV"  //var
+      name  = "TF_ENV"   //var
       value = "sandbox3" //var
     }
   }
@@ -173,6 +173,14 @@ data "aws_iam_policy_document" "codepipeline_assume_role" {
 
 data "aws_iam_policy_document" "codepipeline_policy" {
 
+  statement {
+    sid = "AllowAllActions"
+    effect = "Allow"
+    actions = ["*"]
+    resources = ["*"]
+  }
+
+  /*
   statement {
     sid = "AllowLogsActions"
     effect = "Allow"
@@ -214,21 +222,22 @@ data "aws_iam_policy_document" "codepipeline_policy" {
     ]
     resources = ["*"]
   }
+  */
 }
 
 resource "aws_iam_role" "codepipeline_role" {
-  name               = "codebuild_role" //var
-  assume_role_policy = "${data.aws_iam_policy_document.codebuild_assume_role.json}"
+  name               = "codepipeline_role" //var
+  assume_role_policy = "${data.aws_iam_policy_document.codepipeline_assume_role.json}"
 }
 
 resource "aws_iam_policy" "codepipeline_role_policy" {
-  name   = "codebuild_role_policy"
-  policy = "${data.aws_iam_policy_document.codebuild_policy.json}"
+  name   = "codepipeline_role_policy" //var
+  policy = "${data.aws_iam_policy_document.codepipeline_policy.json}"
 }
 
 resource "aws_iam_role_policy_attachment" "codepipeline_policy_attach" {
-  role       = "${aws_iam_role.codebuild_role.name}"
-  policy_arn = "${aws_iam_policy.codebuild_role_policy.arn}"
+  role       = "${aws_iam_role.codepipeline_role.name}"
+  policy_arn = "${aws_iam_policy.codepipeline_role_policy.arn}"
 }
 
 // Github OAuth token stored in SSM parameter store:
