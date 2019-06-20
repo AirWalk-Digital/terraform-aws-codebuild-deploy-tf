@@ -19,27 +19,6 @@ terraform {
 
 data "aws_caller_identity" "current_account_id" {}
 
-/*
-Create a CodeCommit repo and user
-
-resource "aws_codecommit_repository" "repo" {
-  repository_name = "${var.repo_name}"
-  description     = "Test Repository made by terraform"
-}
-
-resource "aws_iam_user" "user" {
-  name = "${var.code_commit_username}"
-  provisioner "local-exec" {
-    command = "aws iam create-service-specific-credential --user-name ${aws_iam_user.user.name} --service-name codecommit.amazonaws.com > credentials.txt"
-  }
-}
-
-resource "aws_iam_user_policy_attachment" "policy" {
-  user       = "${aws_iam_user.user.name}"
-  policy_arn = "arn:aws:iam::aws:policy/AWSCodeCommitFullAccess"
-}
-*/
-
 ////////// CodeBuild Project
 
 resource "aws_s3_bucket" "artifcats" {
@@ -59,90 +38,20 @@ data "aws_iam_policy_document" "codebuild_assume_role" {
   }
 }
 
-/*
-data "aws_iam_policy_document" "codebuild_policy" {
-
-  statement {
-    sid       = "AllowAllActions"
-    effect    = "Allow"
-    actions   = ["*"]
-    resources = ["*"]
-  }
-
-  statement {
-    sid     = "AllowLogsActions"
-    effect  = "Allow"
-    actions = [
-      "logs:PutLogEvents",
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-    ]
-    resources = ["arn:aws:logs:${var.region}:${data.aws_caller_identity.current_account_id.account_id}:*"]
-  }
-
-  statement {
-    sid     = "AllowEC2Actions"
-    effect  = "Allow"
-    actions = [
-        "ec2:CreateNetworkInterface",
-        "ec2:DescribeDhcpOptions",
-        "ec2:DescribeNetworkInterfaces",
-        "ec2:DeleteNetworkInterface",
-        "ec2:DescribeSubnets",
-        "ec2:DescribeSecurityGroups",
-        "ec2:DescribeVpcs"
-    ]
-    resources = ["arn:aws:ec2:${var.region}:${data.aws_caller_identity.current_account_id.account_id}:*"]
-  }
-
-  statement {
-    sid = "AllowS3Actions"
-    effect = "Allow"
-    actions = ["s3:*"]
-    resources = [
-      "${aws_s3_bucket.artifcats.arn}",
-      "${aws_s3_bucket.artifcats.arn}/*",
-      "arn:aws:s3:::${lookup(var.terraform_state, "bucket")}",
-      "arn:aws:s3:::${lookup(var.terraform_state, "bucket")}/*"
-    ]
-  }
-
-  statement {
-    sid = "AllowCodeBuildActions"
-    effect = "Allow"
-    actions = [
-      "codebuild:BatchGetBuilds",
-      "codebuild:StartBuild"
-    ]
-    resources = ["*"]
-  }
-}
-*/
-
-
 resource "aws_iam_role" "codebuild_role" {
   name               = "codebuild_role" //var
   assume_role_policy = "${data.aws_iam_policy_document.codebuild_assume_role.json}"
 }
 
-/*
-resource "aws_iam_policy" "codebuild_role_policy" {
-  name   = "codebuild_role_policy"
-  policy = "${data.aws_iam_policy_document.codebuild_policy.json}"
-}
-*/
-
 resource "aws_iam_role_policy_attachment" "codebuild_policy_attach" {
   count      = "${length(var.codebuild_iam_policy_arns)}"
   role       = "${aws_iam_role.codebuild_role.name}"
-  #policy_arn = "${aws_iam_policy.codebuild_role_policy.arn}"
   policy_arn = "${var.codebuild_iam_policy_arns[count.index]}"
 }
 
 resource "aws_codebuild_project" "project" {
   name          = "hello_world_2" //var
   description   = "hello_world_2" //var
-  #build_timeout = "5"
   service_role  = "${aws_iam_role.codebuild_role.arn}"
 
   artifacts {
@@ -182,70 +91,10 @@ data "aws_iam_policy_document" "codepipeline_assume_role" {
   }
 }
 
-/*
-
-data "aws_iam_policy_document" "codepipeline_policy" {
-
-  statement {
-    sid = "AllowAllActions"
-    effect = "Allow"
-    actions = ["*"]
-    resources = ["*"]
-  }
-
-  statement {
-    sid = "AllowLogsActions"
-    effect = "Allow"
-    actions = [
-      "logs:PutLogEvents",
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-    ]
-    resources = ["arn:aws:logs:${var.region}:${data.aws_caller_identity.current_account_id.account_id}:*"]
-  }
-
-  statement {
-    sid = "AllowLambdaActions"
-    effect = "Allow"
-    actions = [
-        "lambda:*"
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    sid = "AllowS3Actions"
-    effect = "Allow"
-    actions = ["s3:*"]
-    resources = [
-//      "${aws_s3_bucket.artifcats.arn}",
-//      "${aws_s3_bucket.artifcats.arn}/*",
-      "arn:aws:s3:::${lookup(var.terraform_state, "bucket")}",
-      "arn:aws:s3:::${lookup(var.terraform_state, "bucket")}/*"
-    ]
-  }
-
-  statement {
-    sid = "AllowCodeBuildActions"
-    effect = "Allow"
-    actions = [
-      "codebuild:BatchGetBuilds",
-      "codebuild:StartBuild"
-    ]
-    resources = ["*"]
-  }
-}
-*/
-
 resource "aws_iam_role" "codepipeline_role" {
   name               = "codepipeline_role" //var
   assume_role_policy = "${data.aws_iam_policy_document.codepipeline_assume_role.json}"
 }
-
-//resource "aws_iam_policy" "codepipeline_role_policy" {
-//  name   = "codepipeline_role_policy" //var
-//  policy = "${data.aws_iam_policy_document.codepipeline_policy.json}"
-//}
 
 resource "aws_iam_role_policy_attachment" "codepipeline_policy_attach" {
   count      = "${length(var.codepipeline_iam_policy_arns)}"
