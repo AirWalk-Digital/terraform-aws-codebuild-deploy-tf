@@ -21,3 +21,23 @@ variable "code_commit_username" {
   type        = "string"
   default     = "code_commit_example_user"
 }
+
+variable "codebuild_iam_policy_arns" {
+  description = "IAM Policy to be attached to role"
+  type        = "list"
+  default     = [
+    "arn:aws:iam::aws:policy/AWSLambdaFullAccess",
+    "arn:aws:iam::aws:policy/AmazonS3FullAccess",
+    "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess",
+    "arn:aws:iam::aws:policy/AWSCodeBuildDeveloperAccess",
+  ]
+}
+
+variable "codepipeline_iam_policy_arns" {
+  description = "IAM Policy to be attached to role"
+  type        = "list"
+  default     = [
+    "arn:aws:iam::aws:policy/AmazonS3FullAccess",
+    "arn:aws:iam::aws:policy/AWSCodeBuildDeveloperAccess",
+  ]
+}
