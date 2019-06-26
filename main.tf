@@ -21,16 +21,28 @@ data "aws_caller_identity" "current_account_id" {}
 
 ////////// CodeBuild Project
 
-resource "aws_s3_bucket" "artifcats" {
-  bucket = "codeplay-${var.region}-${data.aws_caller_identity.current_account_id.account_id}"
-  acl    = "private"
+module "codebuild_label" {
+  source     = "git::https://github.com/cloudposse/terraform-terraform-label.git?ref=0.2.1"
+  namespace  = "${var.namespace}"
+  stage      = "${var.stage}"
+  name       = "${var.name}"
+  attributes = ["${compact(concat(var.attributes, list("codebuild", var.region)))}"]
+  delimiter  = "${var.delimiter}"
+  tags       = "${var.tags}"
 }
 
-data "aws_iam_policy_document" "codebuild_assume_role" {
+resource "aws_s3_bucket" "artifcats" {
+  bucket        = "${data.aws_caller_identity.current_account_id.account_id}${var.delimiter}${module.codebuild_label.id}"
+  acl           = "private"
+  force_destroy = "true"
+}
+
+data "aws_iam_policy_document" "codebuild" {
   statement {
     sid    = "TrustPolicy"
     effect = "Allow"
     actions = ["sts:AssumeRole"]
+
     principals {
       type        = "Service"
       identifiers = ["codebuild.amazonaws.com"]
@@ -38,38 +50,33 @@ data "aws_iam_policy_document" "codebuild_assume_role" {
   }
 }
 
-resource "aws_iam_role" "codebuild_role" {
-  name               = "codebuild_role" //var
-  assume_role_policy = "${data.aws_iam_policy_document.codebuild_assume_role.json}"
+resource "aws_iam_role" "codebuild" {
+  name               = "${module.codebuild_label.id}"
+  assume_role_policy = "${data.aws_iam_policy_document.codebuild.json}"
 }
 
-resource "aws_iam_role_policy_attachment" "codebuild_policy_attach" {
+resource "aws_iam_role_policy_attachment" "codebuild" {
   count      = "${length(var.codebuild_iam_policy_arns)}"
-  role       = "${aws_iam_role.codebuild_role.name}"
+  role       = "${aws_iam_role.codebuild.name}"
   policy_arn = "${var.codebuild_iam_policy_arns[count.index]}"
 }
 
-resource "aws_codebuild_project" "project" {
-  name          = "hello_world_2" //var
-  description   = "hello_world_2" //var
-  service_role  = "${aws_iam_role.codebuild_role.arn}"
+resource "aws_codebuild_project" "codebuild" {
+  name         = "${module.codebuild_label.id}"
+  description  = "${var.codebuild_project_description}"
+  service_role = "${aws_iam_role.codebuild.arn}"
 
   artifacts {
     type = "CODEPIPELINE"
   }
+
   environment {
-    compute_type                = "BUILD_GENERAL1_SMALL"
-    image                       = "aws/codebuild/standard:2.0"
-    type                        = "LINUX_CONTAINER"
-    environment_variable {
-      name  = "TF_VERSION" //var loop?
-      value = "0.11.14"    //var
-    }
-    environment_variable {
-      name  = "TF_ENV"   //var
-      value = "sandbox3" //var
-    }
+    compute_type         = "${var.codebuild_compute_type}"
+    image                = "${var.codebuild_image}"
+    type                 = "${var.codebuild_type}"
+    environment_variable = "${var.codebuild_env_vars}"
   }
+
   source {
     type = "CODEPIPELINE"
   }
@@ -77,13 +84,24 @@ resource "aws_codebuild_project" "project" {
 
 ////////// CodePipeline Pipeline
 
-data "aws_iam_policy_document" "codepipeline_assume_role" {
+module "codepipeline_label" {
+  source     = "git::https://github.com/cloudposse/terraform-terraform-label.git?ref=0.2.1"
+  namespace  = "${var.namespace}"
+  stage      = "${var.stage}"
+  name       = "${var.name}"
+  attributes = ["${compact(concat(var.attributes, list("codepipeline", var.region)))}"]
+  delimiter  = "${var.delimiter}"
+  tags       = "${var.tags}"
+}
+
+data "aws_iam_policy_document" "codepipeline" {
   statement {
-    sid    = "TrustPolicy"
-    effect = "Allow"
+    sid     = "TrustPolicy"
+    effect  = "Allow"
     actions = ["sts:AssumeRole"]
+
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = [
         "codepipeline.amazonaws.com"
       ]
@@ -91,33 +109,34 @@ data "aws_iam_policy_document" "codepipeline_assume_role" {
   }
 }
 
-resource "aws_iam_role" "codepipeline_role" {
-  name               = "codepipeline_role" //var
-  assume_role_policy = "${data.aws_iam_policy_document.codepipeline_assume_role.json}"
+resource "aws_iam_role" "codepipeline" {
+  name               = "${module.codepipeline_label.id}"
+  assume_role_policy = "${data.aws_iam_policy_document.codepipeline.json}"
 }
 
-resource "aws_iam_role_policy_attachment" "codepipeline_policy_attach" {
+resource "aws_iam_role_policy_attachment" "codepipeline" {
   count      = "${length(var.codepipeline_iam_policy_arns)}"
-  role       = "${aws_iam_role.codepipeline_role.name}"
+  role       = "${aws_iam_role.codepipeline.name}"
   policy_arn = "${var.codepipeline_iam_policy_arns[count.index]}"
 }
 
 // Github OAuth token stored in SSM parameter store:
 data "aws_ssm_parameter" "github_token" {
-  name = "github_ouath_token_codepipeline" //var
+  name = "${var.ssm_param_name_github_token}"
 }
 
 resource "aws_codepipeline" "codepipeline" {
-  name = "hello_world_2" //var
-  role_arn = "${aws_iam_role.codepipeline_role.arn}"
+  name     = "${module.codepipeline_label.id}"
+  role_arn = "${aws_iam_role.codepipeline.arn}"
 
   artifact_store {
     location = "${aws_s3_bucket.artifcats.bucket}"
-    type = "S3"
+    type     = "S3"
   }
 
   stage {
     name = "Source"
+
     action {
       name             = "Source"
       category         = "Source"
@@ -127,9 +146,9 @@ resource "aws_codepipeline" "codepipeline" {
       output_artifacts = ["source_output"]
 
       configuration = {
-        Owner      = "vishbhalla" //var
-        Repo       = "terraform-aws-hello-world-lambda" //var
-        Branch     = "master" //var
+        Owner      = "${var.github_owner}"
+        Repo       = "${var.github_repo}"
+        Branch     = "${var.git_branch}"
         OAuthToken = "${data.aws_ssm_parameter.github_token.value}"
       }
     }
@@ -147,7 +166,7 @@ resource "aws_codepipeline" "codepipeline" {
       output_artifacts = ["build_output"]
       version          = "1"
       configuration = {
-        ProjectName = "${aws_codebuild_project.project.name}"
+        ProjectName = "${aws_codebuild_project.codebuild.name}"
       }
     }
   }
