@@ -2,6 +2,11 @@ provider "aws" {
   region = var.region
 }
 
+terraform {
+  required_version = ">= 0.12"
+  backend "s3" {}
+}
+
 data "terraform_remote_state" "state" {
   backend = "s3"
 
@@ -11,10 +16,6 @@ data "terraform_remote_state" "state" {
     key     = var.terraform_state["key"]
     encrypt = true
   }
-}
-
-terraform {
-  backend "s3" {}
 }
 
 data "aws_caller_identity" "current_account_id" {}
