@@ -55,51 +55,19 @@ variable "codebuild_project_description" {
 variable "codebuild_iam_policy_arns" {
   description = "IAM Policy to be attached to role"
   type        = list(string)
-  default = [
-    "arn:aws:iam::aws:policy/AWSLambdaFullAccess",
-    "arn:aws:iam::aws:policy/AmazonS3FullAccess",
-    "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess",
-    "arn:aws:iam::aws:policy/AWSCodeBuildDeveloperAccess",
-    "arn:aws:iam::aws:policy/IAMFullAccess",
-  ]
+  default     = []
 }
 
 variable "codepipeline_iam_policy_arns" {
   description = "IAM Policy to be attached to role"
   type        = list(string)
-  default = [
-    "arn:aws:iam::aws:policy/AmazonS3FullAccess",
-    "arn:aws:iam::aws:policy/AWSCodeBuildDeveloperAccess",
-  ]
+  default     = []
 }
 
 variable "codebuild_env_vars" {
   description = "A map of env vars to set in CodeBuild"
-  #type        = object({ name=string, value=number })
   type        = list(any)
-  default = [
-    {
-      name  = "TF_VERSION"
-      value = "0.12.3"
-    },
-    {
-      name  = "TF_ENV"
-      value = "sandbox3"
-    },
-    {
-      name  = "TF_ACTION"
-      value = "apply"
-      #value = "destroy"
-    },
-    {
-      name  = "TF_IN_AUTOMATION"
-      value = "1"
-    },
-    {
-      name  = "TF_LOG"
-      value = "DEBUG"  # Available options: TRACE, DEBUG, INFO, WARN or ERROR
-    }
-  ]
+  default     = []
 }
 
 variable "codebuild_compute_type" {
@@ -141,6 +109,5 @@ variable "git_branch" {
 variable "ssm_param_name_github_token" {
   description = "The SSM parameter store, parameter name which stores the github ouath token"
   type        = string
-  default     = "github_ouath_token_codepipeline"
+  default     = ""
 }
-

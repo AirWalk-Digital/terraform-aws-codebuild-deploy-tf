@@ -1,23 +1,3 @@
-terraform {
-  required_version = ">= 0.12"
-  backend "s3" {}
-}
-
-provider "aws" {
-  region = var.region
-}
-
-data "terraform_remote_state" "state" {
-  backend = "s3"
-
-  config = {
-    bucket  = var.terraform_state["bucket"]
-    region  = var.region
-    key     = var.terraform_state["key"]
-    encrypt = true
-  }
-}
-
 data "aws_caller_identity" "current_account_id" {}
 
 ////////// CodeBuild Project
