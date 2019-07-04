@@ -80,7 +80,7 @@ variable "codebuild_env_vars" {
   default = [
     {
       name  = "TF_VERSION"
-      value = "0.11.14"
+      value = "0.12.3"
     },
     {
       name  = "TF_ENV"
@@ -88,8 +88,8 @@ variable "codebuild_env_vars" {
     },
     {
       name  = "TF_ACTION"
-      #value = "apply"
-      value = "destroy"
+      value = "apply"
+      #value = "destroy"
     },
     {
       name  = "TF_IN_AUTOMATION"

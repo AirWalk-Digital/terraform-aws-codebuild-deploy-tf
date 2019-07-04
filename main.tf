@@ -1,10 +1,10 @@
-provider "aws" {
-  region = var.region
-}
-
 terraform {
   required_version = ">= 0.12"
   backend "s3" {}
+}
+
+provider "aws" {
+  region = var.region
 }
 
 data "terraform_remote_state" "state" {
