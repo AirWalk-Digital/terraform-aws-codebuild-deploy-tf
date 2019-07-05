@@ -1,0 +1,48 @@
+---
+#
+# This is the canonical configuration for the `README.md`
+# Run `make readme` to rebuild the `README.md`
+#
+
+# Name of this project
+name: terraform-aws-codebuild-lambda
+
+# Tags of this project
+tags:
+  - aws
+  - terraform
+  - terraform-modules
+  - lambda
+  - codebuild
+  - codepipeline
+
+# License of this project
+license: "APACHE2"
+
+# Copyrights
+copyrights:
+  - name: "Airwalk Consulting Ltd."
+    url: "https://www.airwalkconsulting.com/"
+    year: "2019"
+
+# Canonical GitHub Enterprise repo 
+github_repo: vishbhalla/terraform-aws-codebuild-lambda
+
+# Short description of this project
+description: |-
+   something
+
+# Pre-requisites
+requirements: |-
+   * something
+  
+# How to use this project
+usage: |-
+  Init Terraform
+
+     * Dev    `terraform init -backend-config=env_vars/hsbcsplunkconnectordev.conf`
+     * Prod   `terraform init -backend-config=env_vars/hsbcsplunkconnectorprod.conf`
+
+include:
+  - "docs/targets.md"
+  - "docs/terraform.md"

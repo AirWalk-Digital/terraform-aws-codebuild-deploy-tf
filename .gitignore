@@ -6,3 +6,5 @@
 *.tfstate.*
 
 *.zip
+.build-harness
+build-harness
