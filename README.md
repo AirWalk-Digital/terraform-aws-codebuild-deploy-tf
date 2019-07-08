@@ -5,15 +5,10 @@
 # terraform-aws-codebuild-lambda
 
 
-## Makefile Targets
-```
-Available targets:
+something
 
-  help                                Help screen
-  help/all                            Display help for all targets
-  help/short                          This help short screen
 
-```
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -37,6 +32,15 @@ Available targets:
 | stage | Stage (e.g. environment) | string | `` | no |
 | tags | Tags | map(string) | `<map>` | no |
 
+## Makefile Targets
+```
+Available targets:
+
+  help                                Help screen
+  help/all                            Display help for all targets
+  help/short                          This help short screen
+
+```
 
 
 

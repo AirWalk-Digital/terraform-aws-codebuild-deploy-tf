@@ -40,9 +40,6 @@ requirements: |-
 usage: |-
   Init Terraform
 
-     * Dev    `terraform init -backend-config=env_vars/hsbcsplunkconnectordev.conf`
-     * Prod   `terraform init -backend-config=env_vars/hsbcsplunkconnectorprod.conf`
-
 include:
-  - "docs/targets.md"
   - "docs/terraform.md"
+  - "docs/targets.md"
