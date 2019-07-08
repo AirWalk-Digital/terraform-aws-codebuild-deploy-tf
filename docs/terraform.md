@@ -21,3 +21,10 @@
 | stage | Stage (e.g. environment) | string | `` | no |
 | tags | Tags | map(string) | `<map>` | no |
 
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| codebuild_project_name | CodeBuild project name |
+| codepipeline_pipeline_name | CodePipeline pipeline name |
+

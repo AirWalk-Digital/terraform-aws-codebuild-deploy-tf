@@ -4,8 +4,19 @@
 
 # terraform-aws-codebuild-lambda
 
+## Description
 
-something
+This
+
+
+## Requirements
+
+* Terraform 0.12.x
+
+
+## Usage
+
+Init Terraform
 
 
 
@@ -31,6 +42,13 @@ something
 | ssm_param_name_github_token | The SSM parameter store, parameter name which stores the github ouath token | string | `` | no |
 | stage | Stage (e.g. environment) | string | `` | no |
 | tags | Tags | map(string) | `<map>` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| codebuild_project_name | CodeBuild project name |
+| codepipeline_pipeline_name | CodePipeline pipeline name |
 
 ## Makefile Targets
 ```

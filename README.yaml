@@ -30,11 +30,11 @@ github_repo: vishbhalla/terraform-aws-codebuild-lambda
 
 # Short description of this project
 description: |-
-   something
+   This
 
 # Pre-requisites
 requirements: |-
-   * something
+   * Terraform 0.12.x
   
 # How to use this project
 usage: |-
