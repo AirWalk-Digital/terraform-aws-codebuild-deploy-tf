@@ -30,7 +30,7 @@ github_repo: vishbhalla/terraform-aws-codebuild-lambda
 
 # Short description of this project
 description: |-
-   This
+  This Teraform module sets up a CodeBuild/CodePipeline project that deploys Teraform.
 
 # Pre-requisites
 requirements: |-
@@ -92,6 +92,8 @@ usage: |-
     ]
   }
   ```
+
+  Also see [this example project](https://github.com/vishbhalla/terraform-aws-codebuild-lambda-example).
 
 include:
   - "docs/terraform.md"

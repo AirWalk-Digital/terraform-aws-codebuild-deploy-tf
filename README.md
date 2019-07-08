@@ -6,7 +6,7 @@
 
 ## Description
 
-This
+This Teraform module sets up a CodeBuild/CodePipeline project that deploys Teraform.
 
 
 ## Requirements
@@ -70,6 +70,8 @@ module "codebuild_tf_lambda_deploy" {
   ]
 }
 ```
+
+Also see [this example project](https://github.com/vishbhalla/terraform-aws-codebuild-lambda-example).
 
 
 
