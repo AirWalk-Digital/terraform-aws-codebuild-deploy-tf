@@ -111,8 +111,17 @@ resource "aws_iam_role_policy_attachment" "codepipeline" {
 }
 
 // Github OAuth token stored in SSM parameter store:
-data "aws_ssm_parameter" "github_token" {
-  name = var.ssm_param_name_github_token
+//data "aws_ssm_parameter" "github_token" {
+//  name = var.ssm_param_name_github_token
+//}
+
+module "store_read" {
+  source         = "git::https://github.com/cloudposse/terraform-aws-ssm-parameter-store?ref=master"
+  parameter_read = [var.ssm_param_name_github_token]
+}
+
+locals {
+  github_token = module.store_read.values
 }
 
 resource "aws_codepipeline" "codepipeline" {
@@ -139,7 +148,8 @@ resource "aws_codepipeline" "codepipeline" {
         Owner      = var.github_owner
         Repo       = var.github_repo
         Branch     = var.git_branch
-        OAuthToken = data.aws_ssm_parameter.github_token.value
+        #OAuthToken = data.aws_ssm_parameter.github_token.value
+        OAuthToken = local.github_token
       }
     }
   }
