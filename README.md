@@ -85,9 +85,9 @@ module "codebuild_tf_lambda_deploy" {
 }
 ```
 
-Also see [this example project](https://github.com/vishbhalla/terraform-aws-codebuild-deploy-tf-example)
-It is setup to deploy [this example hello world Lambda Terraform project](https://github.com/vishbhalla/terraform-aws-hello-world-lambda)
-Taking particular note of [buildspec.yml](https://github.com/vishbhalla/terraform-aws-hello-world-lambda/blob/master/buildspec.yml) file
+Also see [this example project](https://github.com/vishbhalla/terraform-aws-codebuild-deploy-tf-example).
+It is setup to deploy [this example hello world Lambda Terraform project](https://github.com/vishbhalla/terraform-aws-hello-world-lambda).
+Take particular note of [buildspec.yml](https://github.com/vishbhalla/terraform-aws-hello-world-lambda/blob/master/buildspec.yml) file
 and how it ties in with the environment variables set here in `var.codebuild_env_vars`.
 
 To trigger a build, check in some code into the branch `var.git_branch` or manually click the `Release Change` button on the AWS CodePipeline pipeline page.
