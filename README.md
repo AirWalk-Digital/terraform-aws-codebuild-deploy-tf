@@ -13,12 +13,18 @@ You can also configure the required permissions that the CodeBuild/Pipeline role
 
 The `buildspec.yml` file in the source project can be used to match environment variables you set in this project (see Usage).
 
+Current issues:
+ * You need to change an environment variable to `terraform destroy...` a project
+ * You must remember to `terraform destroy...` a project before destroying this project.
+ * The examples shown are setup with projects running terraform using `var_file`s. Things could be adjusted to run terraform in any way you wish.
+ * [BUG] Currently, obtaining the GitHub token from SSM flags up as a change on every TF run.
+
 
 ## Requirements
 
 * Terraform 0.12.x (Although this project is written in Terraform 0.12, the pipeline it deploys can be used to deploy using ANY version of Terraform)
 * A [github Oauth token](https://help.github.com/en/articles/git-automation-with-oauth-tokens) stored in AWS SSM Parameter Store
-* A terraform project with an AWS CodeBuild `buildspec.yml` file in the root directory
+* A terraform project with an AWS CodeBuild `buildspec.yml` file in the root directory checked into GitHub
 
 
 ## Usage
@@ -83,6 +89,8 @@ Also see [this example project](https://github.com/vishbhalla/terraform-aws-code
 It is setup to deploy [this example hello world Lambda Terraform project](https://github.com/vishbhalla/terraform-aws-hello-world-lambda)
 Taking particular note of [buildspec.yml](https://github.com/vishbhalla/terraform-aws-hello-world-lambda/blob/master/buildspec.yml) file
 and how it ties in with the environment variables set here in `var.codebuild_env_vars`.
+
+To trigger a build, check in some code into the branch `var.git_branch` or manually click the `Release Change` button on the AWS CodePipeline pipeline page.
 
 
 
