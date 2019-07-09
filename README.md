@@ -17,7 +17,7 @@ The `buildspec.yml` file in the source project can be used to match environment 
 ## Requirements
 
 * Terraform 0.12.x (Although this project is written in Terraform 0.12, the pipeline it deploys can be used to deploy using ANY version of Terraform)
-* A github Oauth token stored in AWS SSM Parameter Store
+* A [github Oauth token](https://help.github.com/en/articles/git-automation-with-oauth-tokens) stored in AWS SSM Parameter Store
 * A terraform project with an AWS CodeBuild `buildspec.yml` file in the root directory
 
 
@@ -80,7 +80,7 @@ module "codebuild_tf_lambda_deploy" {
 ```
 
 Also see [this example project](https://github.com/vishbhalla/terraform-aws-codebuild-lambda-example)
-The above project is setup to deploy [this example hello world Lambda Terraform project](https://github.com/vishbhalla/terraform-aws-hello-world-lambda)
+It is setup to deploy [this example hello world Lambda Terraform project](https://github.com/vishbhalla/terraform-aws-hello-world-lambda)
 Taking particular note of [buildspec.yml](https://github.com/vishbhalla/terraform-aws-hello-world-lambda/blob/master/buildspec.yml) file
 and how it ties in with the environment variables set here in `var.codebuild_env_vars`.
 
