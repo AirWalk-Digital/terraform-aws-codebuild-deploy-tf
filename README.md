@@ -6,12 +6,19 @@
 
 ## Description
 
-This Teraform module sets up a CodeBuild/CodePipeline project that deploys Teraform.
+This AWS Teraform module sets up a CodeBuild/CodePipeline project that deploys a Terraform project from GitHub.
+
+Just configure the variables with the github settings and an OAuth token giving it permissions to access the code.
+You can also configure the required permissions that the CodeBuild/Pipeline roles require as you wish.
+
+The `buildspec.yml` file in the source project can be used to match environment variables you set in this project (see Usage).
 
 
 ## Requirements
 
-* Terraform 0.12.x
+* Terraform 0.12.x (Although this project is written in Terraform 0.12, the pipeline it deploys can be used to deploy using ANY version of Terraform)
+* A github Oauth token stored in AWS SSM Parameter Store
+* A terraform project with an AWS CodeBuild `buildspec.yml` file in the root directory
 
 
 ## Usage
@@ -22,14 +29,15 @@ module "codebuild_tf_lambda_deploy" {
 
   region    = "eu-west-1"
   name      = "somename"
-  namespace = "airwalk"
+  namespace = "somenamespace"
   stage     = "dev"
   tags      = {
-    Owner = "Airwalk Consulting"
+    Owner = "My Company"
   }
 
   github_owner                  = "github-User-Name"
   github_repo                   = "github_repo_name"
+  git_branch                    = "branch_name"
   ssm_param_name_github_token   = "ssm/path_to/github_oath_token"
   codebuild_project_description = "An project that deploys a lambda"
 
@@ -49,7 +57,7 @@ module "codebuild_tf_lambda_deploy" {
   codebuild_env_vars = {
     {
       name  = "TF_VERSION"
-      value = "0.12.3"
+      value = "0.11.14"
     },
     {
       name  = "TF_ENV"
@@ -71,7 +79,10 @@ module "codebuild_tf_lambda_deploy" {
 }
 ```
 
-Also see [this example project](https://github.com/vishbhalla/terraform-aws-codebuild-lambda-example).
+Also see [this example project](https://github.com/vishbhalla/terraform-aws-codebuild-lambda-example)
+The above project is setup to deploy [this example hello world Lambda Terraform project](https://github.com/vishbhalla/terraform-aws-hello-world-lambda)
+Taking particular note of [buildspec.yml](https://github.com/vishbhalla/terraform-aws-hello-world-lambda/blob/master/buildspec.yml) file
+and how it ties in with the environment variables set here in `var.codebuild_env_vars`.
 
 
 
