@@ -2,7 +2,7 @@
 
 ## [![Airwalk Consulting][logo]](https://airwalkconsulting.com) __Airwalk Consulting__
 
-# terraform-aws-codebuild-lambda
+# terraform-aws-codebuild-deploy-tf
 
 ## Description
 
@@ -31,7 +31,7 @@ Current issues:
 
 ```hcl
 module "codebuild_tf_lambda_deploy" {
-  source = "git::https://github.com/vishbhalla/terraform-aws-codebuild-lambda.git"
+  source = "git::https://github.com/vishbhalla/terraform-aws-codebuild-deploy-tf.git"
 
   region    = "eu-west-1"
   name      = "somename"
@@ -85,7 +85,7 @@ module "codebuild_tf_lambda_deploy" {
 }
 ```
 
-Also see [this example project](https://github.com/vishbhalla/terraform-aws-codebuild-lambda-example)
+Also see [this example project](https://github.com/vishbhalla/terraform-aws-codebuild-deploy-tf-example)
 It is setup to deploy [this example hello world Lambda Terraform project](https://github.com/vishbhalla/terraform-aws-hello-world-lambda)
 Taking particular note of [buildspec.yml](https://github.com/vishbhalla/terraform-aws-hello-world-lambda/blob/master/buildspec.yml) file
 and how it ties in with the environment variables set here in `var.codebuild_env_vars`.
