@@ -55,11 +55,13 @@ resource "aws_codebuild_project" "codebuild" {
     compute_type = var.codebuild_compute_type
     image        = var.codebuild_image
     type         = var.codebuild_type
+
     dynamic "environment_variable" {
       for_each = [for v in var.codebuild_env_vars: {
-        name = v.name
+        name  = v.name
         value = v.value
       }]
+
       content {
         name  = environment_variable.value.name
         value = environment_variable.value.value
@@ -91,7 +93,7 @@ data "aws_iam_policy_document" "codepipeline" {
     actions = ["sts:AssumeRole"]
 
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = [
         "codepipeline.amazonaws.com",
       ]
@@ -111,17 +113,8 @@ resource "aws_iam_role_policy_attachment" "codepipeline" {
 }
 
 // Github OAuth token stored in SSM parameter store:
-//data "aws_ssm_parameter" "github_token" {
-//  name = var.ssm_param_name_github_token
-//}
-
-module "store_read" {
-  source         = "git::https://github.com/cloudposse/terraform-aws-ssm-parameter-store?ref=master"
-  parameter_read = [var.ssm_param_name_github_token]
-}
-
-locals {
-  github_token = module.store_read.values
+data "aws_ssm_parameter" "github_token" {
+  name = var.ssm_param_name_github_token
 }
 
 resource "aws_codepipeline" "codepipeline" {
@@ -143,13 +136,11 @@ resource "aws_codepipeline" "codepipeline" {
       provider         = "GitHub"
       version          = "1"
       output_artifacts = ["source_output"]
-
-      configuration = {
+      configuration    = {
         Owner      = var.github_owner
         Repo       = var.github_repo
         Branch     = var.git_branch
-        #OAuthToken = data.aws_ssm_parameter.github_token.value
-        OAuthToken = local.github_token
+        OAuthToken = data.aws_ssm_parameter.github_token.value
       }
     }
   }
@@ -165,7 +156,7 @@ resource "aws_codepipeline" "codepipeline" {
       input_artifacts  = ["source_output"]
       output_artifacts = ["build_output"]
       version          = "1"
-      configuration = {
+      configuration    = {
         ProjectName = aws_codebuild_project.codebuild.name
       }
     }
