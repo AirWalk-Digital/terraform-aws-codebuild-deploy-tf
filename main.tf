@@ -1,3 +1,7 @@
+terraform {
+  required_version = ">= 0.12.4"
+}
+
 data "aws_caller_identity" "current_account_id" {}
 
 ////////// CodeBuild Project
