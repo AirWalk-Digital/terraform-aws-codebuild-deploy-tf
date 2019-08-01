@@ -31,7 +31,7 @@ Current issues:
 
 ```hcl
 module "codebuild_tf_lambda_deploy" {
-  source = "git::https://github.com/vishbhalla/terraform-aws-codebuild-deploy-tf.git"
+  source = "git::https://github.com/AirWalk-Digital/terraform-aws-codebuild-deploy-tf.git"
 
   region    = "eu-west-1"
   name      = "somename"
